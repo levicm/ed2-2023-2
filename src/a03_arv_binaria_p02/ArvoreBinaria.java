@@ -1,4 +1,4 @@
-package a03_arv_binaria;
+package a03_arv_binaria_p02;
 
 public class ArvoreBinaria {
 
@@ -17,7 +17,7 @@ public class ArvoreBinaria {
 	public NodoAB getRaiz() {
 		return raiz;
 	}
-	
+
 	public int getTamanho() {
 		return tamanho;
 	}
@@ -69,6 +69,69 @@ public class ArvoreBinaria {
 			if (nodo.getEsquerdo() != null || nodo.getDireito() != null) {
 				sb.append(")");
 			}
+		}
+	}
+
+	public void travessiaPreOrdem(Visitante visitante) {
+		travessiaPreOrdem(raiz, visitante);
+	}
+
+	private void travessiaPreOrdem(NodoAB nodo, Visitante visitante) {
+		if (nodo != null) {
+			// processa nodo
+			visitante.visita(nodo);
+
+			// desce para esquerda
+			if (nodo.getEsquerdo() != null) {
+				travessiaPreOrdem(nodo.getEsquerdo(), visitante);
+			}
+
+			// desce para direita
+			if (nodo.getDireito() != null) {
+				travessiaPreOrdem(nodo.getDireito(), visitante);
+			}
+		}
+	}
+
+	public void travessiaEmOrdem(Visitante visitante) {
+		travessiaEmOrdem(raiz, visitante);
+	}
+
+	private void travessiaEmOrdem(NodoAB nodo, Visitante visitante) {
+		if (nodo != null) {
+			// desce para esquerda
+			if (nodo.getEsquerdo() != null) {
+				travessiaPreOrdem(nodo.getEsquerdo(), visitante);
+			}
+
+			// processa nodo
+			visitante.visita(nodo);
+
+			// desce para direita
+			if (nodo.getDireito() != null) {
+				travessiaPreOrdem(nodo.getDireito(), visitante);
+			}
+		}
+	}
+
+	public void travessiaPosOrdem(Visitante visitante) {
+		travessiaPosOrdem(raiz, visitante);
+	}
+
+	private void travessiaPosOrdem(NodoAB nodo, Visitante visitante) {
+		if (nodo != null) {
+			// desce para esquerda
+			if (nodo.getEsquerdo() != null) {
+				travessiaPreOrdem(nodo.getEsquerdo(), visitante);
+			}
+
+			// desce para direita
+			if (nodo.getDireito() != null) {
+				travessiaPreOrdem(nodo.getDireito(), visitante);
+			}
+
+			// processa nodo
+			visitante.visita(nodo);
 		}
 	}
 }

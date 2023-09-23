@@ -1,4 +1,4 @@
-package a03_arv_binaria;
+package a03_arv_binaria_p02;
 
 public class Programa {
 
@@ -21,6 +21,10 @@ public class Programa {
 		System.out.println("Tamanho: " + arvore.getTamanho());
 
 		System.out.println(arvore);
+		
+		System.out.println("Travessia Pré ordem:");
+		ImpressaoVisitante impressora = new ImpressaoVisitante();
+		arvore.travessiaPreOrdem(impressora);
 	}
 
 }
