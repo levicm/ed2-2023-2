@@ -1,4 +1,4 @@
-package a03_arv_binaria_p02;
+package a04_arv_binaria_p03;
 
 public class ArvoreBinaria {
 
@@ -44,6 +44,65 @@ public class ArvoreBinaria {
 		return nodo;
 	}
 	
+	public NodoAB busca(Object info) {
+		VisitanteBuscador buscador = new VisitanteBuscador(info);
+		travessiaEmOrdem(buscador);
+		return buscador.getResultado();
+	}
+
+	public NodoAB busca2(Object info) {
+		return buscaPreOrdem(raiz, info);
+	}
+
+	private NodoAB buscaPreOrdem(NodoAB nodo, Object info) {
+		NodoAB resultado = null;
+		if (nodo != null) {
+			// processa nodo
+			if (info.equals(nodo.getInfo())) {
+				resultado = nodo;
+			}
+			// desce para esquerda
+			if (resultado == null && nodo.getEsquerdo() != null) {
+				resultado = buscaPreOrdem(nodo.getEsquerdo(), info);
+			}
+			// desce para direita
+			if (resultado == null && nodo.getDireito() != null) {
+				resultado = buscaPreOrdem(nodo.getDireito(), info);
+			}
+		}
+		return resultado;
+	}
+	
+	public void removeSimples(NodoAB nodo) {
+		// Implementação mais simples: remove toda subárvore a partir desse nó:
+		NodoAB pai = nodo.getPai();
+		if (pai.getEsquerdo() == nodo) {
+			pai.setEsquerdo(null);
+		}
+		if (pai.getDireito() == nodo) {
+			pai.setDireito(null);
+		}
+		nodo.setPai(null);
+	}
+
+	public void remove(NodoAB nodo) {
+		// Implementação um pouco mais sofisticada: tenta mover os filhos pro pai
+		NodoAB pai = nodo.getPai();
+		if (pai.getDireito() == nodo) {
+			pai.setDireito(nodo.getDireito());
+			if (pai.getEsquerdo() == null) {
+				pai.setEsquerdo(nodo.getEsquerdo());
+			}
+		}
+		if (pai.getEsquerdo() == nodo) {
+			pai.setEsquerdo(nodo.getEsquerdo());
+			if (pai.getDireito() == null) {
+				pai.setDireito(nodo.getDireito());
+			}
+		}
+		nodo.setPai(null);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
