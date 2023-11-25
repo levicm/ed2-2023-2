@@ -1,4 +1,9 @@
-package a07_trie_p01;
+package a08_trie_p02;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ArvoreTrie {
 
@@ -89,6 +94,47 @@ public class ArvoreTrie {
 
 	public int getTamanho() {
 		return tamanho;
+	}
+	
+	public Set chaves() {
+		Set result = new HashSet();
+		chaves(result, raiz, "");
+		return result;
+	}
+
+	private void chaves(Set result, NodoTrie nodo, String chave) {
+		if (nodo.getValor() != null) {
+			result.add(chave);
+		}
+		for (int i = 0; i < NodoTrie.QTD_LETRAS; ++i) {
+			char letra = (char) i;
+			NodoTrie filho = nodo.getFilho(letra);
+			if (filho != null) {
+				chaves(result, filho, chave + letra);
+			}
+		}
+	}
+
+	public List valores() {
+		List result = new ArrayList();
+		valores(result, raiz);
+		return result;
+	}
+
+	private void valores(List result, NodoTrie nodo) {
+		if (nodo.getValor() != null) {
+			result.add(nodo.getValor());
+		}
+		for (int i = 0; i < NodoTrie.QTD_LETRAS; ++i) {
+			NodoTrie filho = nodo.getFilho((char) i);
+			if (filho != null) {
+				valores(result, filho);
+			}
+		}
+	}
+	
+	public boolean contemValor(Object valor) {
+		return valores().contains(valor);
 	}
 
 	@Override

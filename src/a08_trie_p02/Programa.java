@@ -1,4 +1,4 @@
-package a07_trie_p01;
+package a08_trie_p02;
 
 public class Programa {
 
@@ -12,6 +12,8 @@ public class Programa {
 		trie.adiciona("bota", 15);
 		
 		System.out.println(trie);
+		System.out.println(trie.chaves());		
+		System.out.println(trie.valores());		
 		
 		System.out.println(trie.pega("amo"));
 		System.out.println(trie.pega("botas"));
@@ -24,6 +26,8 @@ public class Programa {
 		System.out.println(trie);
 		trie.remove("amo");
 		System.out.println(trie);
+		
+		
 	}
 
 	private static void testaChar() {
