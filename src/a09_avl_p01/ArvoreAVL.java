@@ -13,36 +13,28 @@ public class ArvoreAVL {
 	}
 
 	public void adiciona(Comparable info) {
-		NodoAVL novoNodo = new NodoAVL(info);
-		if (raiz == null) {
-			raiz = novoNodo;
+		this.raiz = adiciona(info, this.raiz);
+	}
+
+	private NodoAVL adiciona(Comparable info, NodoAVL nodo) {
+		if (nodo == null) {
+			nodo = new NodoAVL(info);
 			tamanho++;
 		} else {
-			NodoAVL nodo = raiz;
-			while (nodo != null) {
-				int comp = info.compareTo(nodo.getInfo());
-				if (comp > 0) {
-					if (nodo.getDireito() == null) {
-						nodo.setDireito(novoNodo);
-						novoNodo.setPai(nodo);
-						tamanho++;
-						break;
-					} else {
-						nodo = nodo.getDireito();
-					}
-				} else if (comp < 0) {
-					if (nodo.getEsquerdo() == null) {
-						nodo.setEsquerdo(novoNodo);
-						novoNodo.setPai(nodo);
-						tamanho++;
-						break;
-					} else {
-						nodo = nodo.getEsquerdo();
-					}
-				}
+			int comp = info.compareTo(nodo.getInfo());
+			if (comp > 0) {
+				NodoAVL filho = adiciona(info, nodo.getDireito());
+				nodo.setDireito(filho);
+				filho.setPai(nodo);
+			} else if (comp < 0) {
+				NodoAVL filho = adiciona(info, nodo.getEsquerdo());
+				nodo.setEsquerdo(filho);
+				filho.setPai(nodo);
 			}
-			balancear(novoNodo);
 		}
+		nodo.atualizaAltura();
+		nodo = balancear(nodo);
+		return nodo;
 	}
 
 	private NodoAVL balancear(NodoAVL nodo) {
@@ -50,40 +42,51 @@ public class ArvoreAVL {
 		if (fator == 2) { // Desbalanceado para a direita;
 			// Balancear
 			if (nodo.getDireito().getFator() > 0) {
-				rotacaoEsquerda(nodo);
+				nodo = rotacaoEsquerda(nodo);
 			} else {
-				rotacaoDuplaEsquerda(nodo);
+				nodo = rotacaoDuplaEsquerda(nodo);
 			}
 		} else if (fator == -2) { // Desbalanceado para a esquerda;
 			// Balancear
 			if (nodo.getEsquerdo().getFator() < 0) {
-				rotacaoDireita(nodo);
+				nodo = rotacaoDireita(nodo);
 			} else {
-				rotacaoDuplaDireita(nodo);
+				nodo = rotacaoDuplaDireita(nodo);
 			}
 		}
-		nodo.atualizaAltura();
 		return nodo;
 	}
 
-	private void rotacaoDuplaDireita(NodoAVL nodo) {
-		// TODO Auto-generated method stub
-		
+	private NodoAVL rotacaoDireita(NodoAVL n) {
+		NodoAVL ne = n.getEsquerdo();
+		n.setEsquerdo(ne.getDireito());
+		ne.setDireito(n);
+		ne.setPai(n.getPai());
+		n.setPai(ne);
+		n.atualizaAltura();
+		ne.atualizaAltura();
+		return ne;
 	}
 
-	private void rotacaoDireita(NodoAVL nodo) {
-		// TODO Auto-generated method stub
-		
+	private NodoAVL rotacaoEsquerda(NodoAVL n) {
+		NodoAVL nd = n.getDireito();
+		n.setDireito(nd.getEsquerdo());
+		nd.setEsquerdo(n);
+		nd.setPai(n.getPai());
+		n.setPai(nd);
+		n.atualizaAltura();
+		nd.atualizaAltura();
+		return nd;
 	}
 
-	private void rotacaoDuplaEsquerda(NodoAVL nodo) {
-		// TODO Auto-generated method stub
-		
+	private NodoAVL rotacaoDuplaDireita(NodoAVL nodo) {
+		nodo.setEsquerdo(rotacaoEsquerda(nodo.getEsquerdo()));
+		return rotacaoDireita(nodo);
 	}
 
-	private void rotacaoEsquerda(NodoAVL nodo) {
-		// TODO Auto-generated method stub
-		
+	private NodoAVL rotacaoDuplaEsquerda(NodoAVL nodo) {
+		nodo.setDireito(rotacaoDireita(nodo.getDireito()));
+		return rotacaoEsquerda(nodo);
 	}
 
 	public NodoAVL busca(Comparable info) {
@@ -113,8 +116,23 @@ public class ArvoreAVL {
 
 	public void remove(Comparable info) {
 		NodoAVL nodo = busca(info);
+		NodoAVL pai = nodo.getPai();
 		if (nodo != null) {
 			remove(nodo);
+			balancearPais(pai);
+		}
+	}
+
+	private void balancearPais(NodoAVL nodo) {
+		if (nodo != null) {
+			nodo.atualizaAltura();
+			boolean eRaiz = nodo == raiz; 
+			
+			nodo = balancear(nodo);
+			if (eRaiz) {
+				raiz = nodo;
+			}
+			balancearPais(nodo.getPai());
 		}
 	}
 
@@ -283,6 +301,7 @@ public class ArvoreAVL {
 		}
 		sb.append(posicao + ": ");
 		sb.append(nodo.getInfo().toString());
+		sb.append(" ("+nodo.getFator()+")");
 		sb.append("\r\n");
 		if (nodo.getDireito() != null) {
 			montaStringPreOrdem(nodo.getDireito(), sb, nivel + 1, "D");
